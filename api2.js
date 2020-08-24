@@ -1,59 +1,69 @@
 const key = "7a2a933f48cb2de824f622d8e67bcbf5";
-// function fetchResults(){
+function fetchResults(e){
+  e.preventDefault();
+  console.clear();
 fetch("https://cors-anywhere.herokuapp.com/https://api-v3.igdb.com/games",{
   method: "Post",
   headers: {
       'Accept': 'application/json',
       'user-key': key
   },
-  body: "fields name, summary, url, popularity; limit 72; sort popularity desc;"
+   body: "fields name, summary, url, popularity; limit 100; sort popularity desc;"
 })
   .then(function(result){
     console.log(result)
     return result.json();
   })
-  .then(response => {
-      console.log(response);
-      displayResults(response);
+  .then(function(json) {
+      console.log(json);
+      displayResults(json);
   })
-  .catch(err => {
+  .catch(function(err){
       console.error(err);
   });
-// }
+}
 const searchPull = document.querySelector('.search');
 const searchForm = document.querySelector('form');
 const submitBtn = document.querySelector('.submit');
 const section = document.querySelector('section');
-// searchForm.addEventListener('submit', fetchResults);
+searchForm.addEventListener('submit', fetchResults);
 
-  function displayResults(response) {
+  function displayResults(json) {
     while (section.firstChild) {
       section.removeChild(section.firstChild);
     }
-    let results = response.name;
-    let resultslink = response.url;
-    let rating = response.popularity;
-    let gameBio = response.summary;
-    console.log(results);
-          let result = document.createElement('result');
-
-          let gameSummary = document.createElement('p');
-          
-          let gamerating = document.createElement('p'); //name
-          
-          let gamelink = document.createElement('a'); //url
-
-          result.textContent=results;
-          gamelink.textContent=resultslink;
-          gamelink.href = resultslink;
-          gamerating.textContent = rating;
-          gameSummary.textContent=gameBio;
-          result.appendChild(gameSummary);
-          result.appendChild(gamerating);
-          result.appendChild(gamelink);
-          section.appendChild(result);
-          console.log(section);
-          console.log(gameSummary);
-          console.log(gamerating);
-          console.log(gamelink);
+    // let responses = json;
+    for (let i = 0; i < json.length; i++) {
+    let game = document.createElement('game');
+    let name = document.createElement('h3');
+    let gameSummary = document.createElement('h5');
+    let summary = document.createElement('p');
+    let ranking = document.createElement('h5');
+    let popularity = document.createElement('p'); //name
+    let link = document.createElement('h5');
+    let url = document.createElement('a'); //url
+    let placement = document.createElement('h2');
+    let current = json[i];
+          console.log(current);
+          name.textContent= current.name;
+          placement.textContent = i+1;
+          url.textContent= current.url;
+          url.href = current.url;
+          gameSummary.textContent = "About this game:";
+          ranking.textContent= "Popularity Score:";
+          popularity.textContent = current.popularity;
+          summary.textContent = current.summary;
+          link.textContent = "Link to more information about this game:";
+          game.setAttribute('class', 'game');
+          game.appendChild(placement);
+          game.appendChild(name);
+          game.appendChild(gameSummary);
+          game.appendChild(summary);
+          game.appendChild(ranking);
+          game.appendChild(popularity);
+          game.appendChild(link);
+          game.appendChild(url);
+          section.appendChild(game);
+          console.log(game);
+        }
     }
